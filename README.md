@@ -1,56 +1,54 @@
-# Welcome to your Expo app 👋
+# Luna
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App mobile (React Native + Expo) para gerenciar e compartilhar os cuidados de pets.
+Funciona 100% offline: os dados ficam em um banco SQLite local no aparelho.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Rodando
 
 ```bash
-npm run reset-project
+npm install
+npx expo start        # depois: "a" (Android), "w" (web) ou escaneie o QR no Expo Go
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+## Estrutura
 
-### Other setup steps
+```
+src/
+  app/             telas (expo-router) — cada arquivo é uma rota
+  components/      componentes de UI (ui.tsx, pet-form, pet-avatar…)
+  context/         sessão do usuário logado
+  db/              migrations (PRAGMA user_version) e tipos das tabelas
+  repositories/    todo o SQL fica aqui — camada que a futura API vai substituir
+  services/        auth (hash de senha) e acesso (regra de permissão tutor/cuidador)
+  hooks/ utils/
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Decisões
 
-## Learn more
+- **Compartilhamento:** por enquanto, tutor e cuidador usam contas diferentes no mesmo aparelho.
+  A sincronização entre aparelhos virá com a API.
+- **Ids UUID** em todas as tabelas, para facilitar a sincronização futura.
+- **Acesso:** toda tela consulta `services/acesso.ts` (`carregarAcesso(...).pode(acao)`).
+- **Senha:** SHA-256 com salt aleatório (expo-crypto). Sessão salva na tabela `app_kv`.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Alterando o banco
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Adicione um novo item ao array `MIGRATIONS` em `src/db/migrations.ts`. Nunca edite uma migration já publicada.
 
-## Join the community
+## Gerando o APK (local, Windows)
 
-Join our community of developers creating universal apps.
+```bash
+npx expo prebuild --platform android
+cd android && ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+# saída: android/app/build/outputs/apk/release/app-release.apk
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+No Windows, o CMake 3.22.1 que vem no SDK traz um `ninja` antigo, que estoura o limite de 260
+caracteres de caminho. Instale o `cmake;3.31.6` pelo sdkmanager e aponte para ele em
+`android/local.properties`:
+
+```
+cmake.dir=C\:\Users\<usuario>\AppData\Local\Android\Sdk\cmake\3.31.6
+```
+
+O APK de release sai assinado com a chave de debug. Serve para instalar e testar, mas não para a Play Store.

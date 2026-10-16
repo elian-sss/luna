@@ -1,65 +1,81 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://unistyl.es/), etc.
+ * Tokens do design system "Organic" (protótipo PetCare no claude.ai/design):
+ * fundo creme, acento terracota, segundo acento sálvia, Caprasimo nos títulos e Figtree no texto.
+ * O sistema só define tema claro (app.json fixa userInterfaceStyle = light).
  */
 
 import '@/global.css';
 
-import { Platform } from 'react-native';
-
 export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-  },
+  // Papéis
+  background: '#f5ead8',
+  backgroundElement: '#ebddc5', // --color-surface
+  text: '#201e1d',
+  textSecondary: 'rgba(32, 30, 29, 0.55)',
+  textLabel: 'rgba(32, 30, 29, 0.7)',
+  textFaint: 'rgba(32, 30, 29, 0.4)',
+  border: 'rgba(32, 30, 29, 0.16)', // --color-divider
+  pressed: 'rgba(32, 30, 29, 0.07)',
+
+  // Acento (terracota)
+  primary: '#c67139',
+  onPrimary: '#f5ead8',
+  accent100: '#fff2eb',
+  accent200: '#ffe1d0',
+  accent600: '#b2622d',
+  accent700: '#8c491a',
+  accent800: '#643312',
+
+  // Segundo acento (sálvia)
+  accent2: '#7a8a5e',
+  accent2_100: '#f0fae1',
+  accent2_700: '#56633f',
+  accent2_800: '#3d472b',
+
+  // Neutros
+  neutral100: '#f9f4ed',
+  neutral800: '#474238',
+
+  // O sistema não tem vermelho: erros e ações destrutivas usam o tom escuro do acento.
+  danger: '#8c491a',
+  success: '#56633f',
 } as const;
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
+export type ThemeColor = keyof typeof Colors;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+/** Famílias carregadas em src/app/_layout.tsx (useFonts). */
+export const Fonts = {
+  heading: 'Caprasimo_400Regular',
+  body: 'Figtree_400Regular',
+  bodySemiBold: 'Figtree_600SemiBold',
+  bodyBold: 'Figtree_700Bold',
+} as const;
 
+/** Escala de espaçamento do sistema (densidade 1,1×). */
 export const Spacing = {
   half: 2,
   one: 4,
-  two: 8,
-  three: 16,
-  four: 24,
-  five: 32,
-  six: 64,
+  two: 9,
+  three: 13,
+  four: 18,
+  five: 26,
+  six: 35,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
+/** Margem lateral das telas. */
+export const Margem = 20;
+
+export const Radius = {
+  sm: 8,
+  md: 16,
+  /** Cartões e diálogos (radius-lg × 1,15 no "rounded frame" do sistema). */
+  cartao: 32,
+  pill: 999,
+} as const;
+
+export const Sombra = {
+  sm: '0 1px 2px rgba(46, 43, 37, 0.14)',
+  md: '0 3px 10px rgba(46, 43, 37, 0.16)',
+} as const;
+
 export const MaxContentWidth = 800;
